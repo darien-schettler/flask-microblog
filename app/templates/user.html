@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block app_content %}
+
+    <table class="table table-hover">
+        <tr>
+            <td width="256px">
+                <img src="{{ user.avatar(256) }}">
+            </td>
+            <td>
+                <h1>User: {{ user.username }}</h1>
+
+                {% if user.about_me %}
+                    <p>
+                        About Me: {{ user.about_me }}
+                    </p>
+                {% endif %}
+
+                <p>
+                    Email: {{ user.email }}
+                </p>
+
+                {% if user.last_seen %}
+                    <p>
+                        Last seen on: {{ moment(user.last_seen).format('LLL') }}
+                    </p>
+                {% endif %}
+
+                <p>{{ user.followers.count() }} followers, {{ user.followed.count() }} following.</p>
+                <!--
+                                 3 OPTIONS FOR THE LINE TO DO WITH FOLLOWING
+                1.  If the user is viewing his or her own profile, the "Edit" link shows as before.
+                2.  If the user is viewing a user that is not currently followed, the "Follow" link shows.
+                3.  If the user is viewing a user that is currently followed, the "Unfollow" link shows.
+                -->
+                {% if user == current_user %}
+
+                    <p>
+                        <a href="{{ url_for('main.edit_profile') }}">
+                            Edit your profile
+                        </a>
+                    </p>
+
+                {% elif not current_user.is_following(user) %}
+
+                    <p>
+                        <a href="{{ url_for('main.follow', username=user.username) }}">
+                            Follow
+                        </a>
+                    </p>
+
+                {% else %}
+
+                    <p>
+                        <a href="{{ url_for('main.unfollow', username=user.username) }}">
+                            Un-Follow
+                        </a>
+                    </p>
+
+                {% endif %}
+
+            </td>
+        </tr>
+    </table>
+    <hr>
+
+    {% for post in posts %}
+
+        {% include '_post.html' %}
+
+    {% endfor %}
+
+    <div class="row text-center">
+        <nav aria-label="...">
+            <ul class="pagination">
+                <li class="page-item{% if not prev_url %} disabled{% endif %}">
+                    <a class="page-link" href="{{ prev_url or '#' }}" tabindex="{% if not prev_url %}-1{%else%}1{%endif%}">
+                        <span aria-hidden="true">&larr;</span> Newer Posts
+                    </a>
+                </li>
+                <li class="page-item{% if not next_url %} disabled{% endif %}">
+                    <a class="page-link" href="{{ next_url or '#' }}" tabindex="{% if not next_url %}-1{%else%}1{%endif%}">
+                        Older Posts <span aria-hidden="true">&rarr;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,156 @@
+<!--
+     base.html is the template that will be extended into all the html template files
+     base.html contains the title, navbar, flash messages, and the call for block content
+
+     Here you can see how I make this template derive from bootstrap/base.html, followed by the
+     three blocks that implement the page title, navigation bar and page content respectively.
+
+     The title block needs to define the text that will be used for the page title, with the <title> tags.
+     For this block I simply moved the logic that was inside the <title> tag in the original base template.
+
+     The navbar block is an optional block that can be used to define a navigation bar.
+     For this block, I adapted the example in the Bootstrap navigation bar documentation so that it includes
+     a site branding on the left end, followed by the Home and Explore links.
+     I then added the Profile and Login or Logout links aligned with the right border of the page.
+
+     Finally, in the content block I'm defining a top-level container, and inside it I have the logic
+     that renders flashed messages, which are now going to appear styled as Bootstrap alerts.
+     That is followed with a new app_content block that is defined just so that derived templates
+     can define their own content.
+
+        -------------------------------------------------------------------------------------------------------
+        |                      BLOCKS YOU CAN AMEND IF YOU WISH USING THE SUPER COMMAND                       |
+        -------------------------------------------------------------------------------------------------------
+        |      Block Name	    |       Outer Block	        |                     Purpose                     |
+        -------------------------------------------------------------------------------------------------------
+        |   - doc               |   - n/a                   |   - Outermost Block                             |
+        |   - html              |   - doc                   |   - Contains complete contents of <html> tag    |
+        |   - html attribs      |   - doc                   |   - Attributes for the <html> tag               |
+        |   - head              |   - doc                   |   - Contains complete contents of <head> tag    |
+        |   - body              |   - doc                   |   - Contains complete contents of <body> tag    |
+        |   - body attribs      |   - body                  |   - Attributes for the <body> tag               |
+        |   - title             |   - head                  |   - Contains complete contents of <title> tag   |
+        |   - styles            |   - head                  |   - Contains CSS style <link> tags inside head  |
+        |   - metas             |   - head                  |   - Contains all <meta> tags inside head        |
+        |   - navbar            |   - body                  |   - An empty block directly above CONTENT       |
+        |   - content           |   - body                  |   - Convenience block inside body (stuff here)  |
+        |   - scripts           |   - body                  |   - Contains all <script> tags at end of body   |
+        -------------------------------------------------------------------------------------------------------
+
+-->
+
+{% extends 'bootstrap/base.html' %}
+
+
+{% block styles %}
+{{super()}}
+<link rel="stylesheet" href="https://use.typekit.net/kzu4phf.css">
+<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/main.css')}}">
+{% endblock %}
+
+
+{% block title %}
+    {% if title %}
+        {{ title }} - Acorn's Microblog
+    {% else %}
+        Welcome to Acorn's Microblog
+    {% endif %}
+{% endblock %}
+
+{% block navbar %}
+    <nav class="navbar navbar-default">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="{{ url_for('main.index') }}">
+                    Acorn's Microblog
+                </a>
+            </div>
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a href="{{ url_for('main.index') }}">
+                            Home
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('main.explore') }}">
+                            Explore
+                        </a>
+                    </li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    {% if current_user.is_anonymous %}
+                        <li>
+                            <a href="{{ url_for('auth.login') }}">
+                                Login
+                            </a>
+                        </li>
+                        {% else %}
+                        <li>
+                            <a href="{{ url_for('main.user', username=current_user.username) }}">
+                                Profile
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('auth.logout') }}">
+                                Logout
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {# application content needs to be provided in the app_content block #}
+        {% block app_content %}{% endblock %}
+    </div>
+{% endblock %}
+
+<!--
+    The scripts block that I add below is another block exported by Flask-Bootstrap's base template.
+    This is the place where JavaScript imports are to be included. This block is different from previous
+    ones in that it already comes with some content defined in the base template. All I want to do is add
+    the moment.js library, without losing the base contents. And this is achieved with the super() statement,
+    which preserves the content from the base template. If you define a block in your template without
+    using super(), then any content defined for this block in the base template will be lost.
+-->
+
+{% block scripts %}
+    {{ super() }}
+    {{ moment.include_moment() }}
+    <script>
+        function translate(sourceElem, destElem, sourceLang, destLang) {
+            $(destElem).html('<img src="{{ url_for('static', filename='loading.gif') }}">');
+            $.post('/translate', {
+                text: $(sourceElem).text(),
+                source_language: sourceLang,
+                dest_language: destLang
+            }).done(function(response) {
+                $(destElem).text(response['text'])
+            }).fail(function() {
+                $(destElem).text("{{ _('Error: Could not contact server.') }}");
+            });
+        }
+    </script>
+{% endblock %}
