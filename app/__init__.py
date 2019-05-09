@@ -10,6 +10,8 @@ from flask_mail import Mail
 from flask_bootstrap import Bootstrap
 from flask_moment import Moment
 from flask_babel import Babel
+import sentry_sdk
+from sentry_sdk.integrations.flask import FlaskIntegration
 
 
 # This class is used to control the SQLAlchemy integration to one or more Flask applications. Depending on how you
@@ -18,6 +20,10 @@ from flask_babel import Babel
 # The usage mode which is utilized involves binding the instance to a very specific Flask application:
 db = SQLAlchemy()
 
+# Sentry extension
+sentry_sdk.init(
+    dsn="https://b4fd20a1b0d34a6abefbda5c324aaefc@sentry.io/1456192",
+    integrations=[FlaskIntegration()])
 
 # Flask-Migrate is an extension that handles SQLAlchemy database migrations for Flask applications using Alembic. The
 # database operations are made available through the Flask command-line interface or through the Flask-Script
