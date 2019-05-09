@@ -57,3 +57,4 @@ werkzeug.routing.BuildError: Could not build url for endpoint 'register'. Did yo
 2019-05-09 11:03:39,318 INFO: Acorn's Microblog startup [in C:\Users\Darie\Desktop\microblog\app\__init__.py:218]
 2019-05-09 11:07:49,584 INFO: Acorn's Microblog startup [in C:\Users\Darie\Desktop\microblog\app\__init__.py:218]
 2019-05-09 11:14:08,829 INFO: Acorn's Microblog startup [in C:\Users\Darie\Desktop\microblog\app\__init__.py:218]
+2019-05-09 11:40:37,619 INFO: Acorn's Microblog startup [in C:\Users\Darie\Desktop\microblog\app\__init__.py:218]
