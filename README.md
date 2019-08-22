@@ -1,6 +1,8 @@
-# A Flask Application to Learn More About Flask and Back-End Web Development
+# Micro Social Network
 
-A small social-network application with the following functionality
+A small social network and blog to learn more about flask and back-end web development
+
+Here are some of the pieces of functionality:
   - Elasticsearch
   - AJAX Translate through Azure Text Translate API
   - User Notifications
@@ -27,10 +29,15 @@ A small social-network application with the following functionality
 ```
 
 
-## Prerequisites
+## Prerequisites/Dependencies
 
 ```
-TBD
+
+- SQLite
+- etc.
+- TBD
+-
+
 ```
 
 ## Installation
